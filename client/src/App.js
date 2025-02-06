@@ -1,9 +1,17 @@
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import "./App.css";
 import { HomePage } from "./pages/Home";
 import { SurveyPage } from "./pages/Survey";
+import validator from "validator"
 
 import "bootstrap/dist/css/bootstrap.css";
+
+//TODO: alert when trying to leave survey page
+
+function email_present() {
+  const email = localStorage.getItem("email")
+  return email !== null && validator.isEmail(email)
+}
 
 export default function SurveyJSReactApplication() {
   return (
@@ -12,18 +20,10 @@ export default function SurveyJSReactApplication() {
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="/">
-                SurveyJS + React
+              <a className="navbar-brand">
+                JokeTailor Survey
               </a>
             </div>
-            <ul className="nav navbar-nav">
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/survey">Survey</Link>
-              </li>
-            </ul>
           </div>
         </nav>
 
@@ -33,7 +33,7 @@ export default function SurveyJSReactApplication() {
               <HomePage />
             </Route>
             <Route path="/survey">
-              <SurveyPage />
+              {email_present() ? <SurveyPage /> : <Redirect to="/" />}
             </Route>
           </Switch>
         </div>

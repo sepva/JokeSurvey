@@ -1,27 +1,46 @@
 import express from 'express';
 const app = express();
 import cors from 'cors';
-import path from 'path';
-import { readFile } from 'fs/promises';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { SurveyModel, SurveyResultModel } from './model/survey.js';
 
-const json = JSON.parse(
-    await readFile(
-        new URL('./data/survey_json.json', import.meta.url)
-    )
-);
-
+dotenv.config()
 app.use(cors())
+app.use(bodyParser.json())
 
 // app.use(express.static(path.join(__dirname, '../client/build')));
 
+//check if server is running
 app.listen(8080, () => {
     console.log('server listening on port 8080')
 })
 
-app.get('/', (req, res) => {
-    res.send('Hello from our server!')
+//connect to mongodb
+mongoose.connect(process.env.MONGODB).then(() => {
+    console.log('connected to mongodb')
+});
+
+//TODO: change this: DB contains a bunch of jokes with jokeId and n different jokes are selected for the survey.
+async function get_survey() {
+    const count = await SurveyModel.countDocuments().exec();
+    const random = Math.floor(Math.random() * count);
+    const survey = await SurveyModel.findOne({}).skip(random).exec();
+    return JSON.parse(survey.json)
+}
+
+//get survey
+app.get('/survey', (req, res) => {
+    get_survey().then(json =>
+        res.json(json)
+    )
 })
 
-app.get('/survey', (req, res) => {
-    res.json(json)
+//post results of survey
+app.post('/survey', (req, res) => {
+    SurveyResultModel.create({
+        email: req.body.email,
+        resultJson: JSON.stringify(req.body.result)
+    });
 })

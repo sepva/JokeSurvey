@@ -6,12 +6,9 @@ import axios from 'axios';
 
 StylesManager.applyTheme("defaultV2");
 
-function onValueChanged(_, options) {
-  console.log("New value: " + options.value);
-}
-
 function onComplete(survey) {
-  console.log("Survey complete! Results: " + JSON.stringify(survey.data));
+  const email = localStorage.getItem("email");
+  axios.post("http://localhost:8080/survey", { email: email, result: survey.data });
 }
 
 export function SurveyPage() {
@@ -30,11 +27,9 @@ export function SurveyPage() {
 
   return (
     <div className="container">
-      <h1>SurveyJS Library / Runner</h1>
       <Survey
         model={model}
         onComplete={onComplete}
-        onValueChanged={onValueChanged}
       />
     </div>
   );
