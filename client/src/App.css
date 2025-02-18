@@ -3,11 +3,6 @@
   overflow-y: auto;
 }
 
-h1,
-h1+span {
-  padding: 0 20px;
-}
-
 .jumbotron ul {
   font-size: 21px;
 }

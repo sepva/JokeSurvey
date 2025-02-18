@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Prompt, isPrompt } from "react-router-dom";
 import { Model, StylesManager } from "survey-core";
 import { Survey } from "survey-react-ui";
 import "survey-core/defaultV2.css";
@@ -21,6 +22,17 @@ export function SurveyPage() {
     });
   }, [serverUrl]);
 
+  useEffect(() => {
+    window.addEventListener('beforeunload', alertUser)
+    return () => {
+      window.removeEventListener('beforeunload', alertUser)
+    }
+  }, [])
+  const alertUser = e => {
+    e.preventDefault()
+    e.returnValue = ''
+  }
+
   if (!surveyJson) return <div>Loading...</div>;
 
   const model = new Model(surveyJson);
@@ -30,6 +42,9 @@ export function SurveyPage() {
       <Survey
         model={model}
         onComplete={onComplete}
+      />
+      <Prompt
+        message={() => 'Are you sure you want to leave this beautiful survey? Your progress could be lost...'}
       />
     </div>
   );

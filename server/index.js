@@ -22,12 +22,9 @@ mongoose.connect(process.env.MONGODB).then(() => {
     console.log('connected to mongodb')
 });
 
-//TODO: change this: DB contains a bunch of jokes with jokeId and n different jokes are selected for the survey.
 async function get_survey() {
-    const count = await SurveyModel.countDocuments().exec();
-    const random = Math.floor(Math.random() * count);
-    const survey = await SurveyModel.findOne({}).skip(random).exec();
-    return JSON.parse(survey.json)
+    const survey = await SurveyModel.aggregate().sample(1)
+    return JSON.parse(survey[0].json)
 }
 
 //get survey
