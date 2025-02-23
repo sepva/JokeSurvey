@@ -6,7 +6,6 @@ const surveySchema = new Schema({
 });
 
 const surverResult = new Schema({
-    email: String,
     resultJson: String
 });
 

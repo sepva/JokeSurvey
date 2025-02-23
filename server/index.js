@@ -4,30 +4,23 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path'
 import { SurveyModel, SurveyResultModel } from './model/survey.js';
 import { createLogger, transports } from "winston"
+const port = process.env.PORT || "8080"
 
 const logger = createLogger({
-    transports: [
-        new transports.File({ filename: 'error.log', level: 'error' }),
-        new transports.File({ filename: 'info.log', level: 'info' }),
-    ],
-    rejectionHandlers: [
-        new transports.File({ filename: 'rejections.log' })
-    ],
-    exceptionHandlers: [
-        new transports.File({ filename: 'exceptions.log' })
-    ]
+    transports: [new transports.Console()]
 });
 
 dotenv.config()
 app.use(cors())
 app.use(bodyParser.json())
 
-// app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(import.meta.dirname, 'build')));
 
 //check if server is running
-app.listen(8080, () => {
+app.listen(port, () => {
     logger.info("Server started and listening")
 })
 
@@ -61,7 +54,6 @@ app.get('/survey', (req, res, next) => {
 //post results of survey
 app.post('/survey', (req, res, next) => {
     SurveyResultModel.create({
-        email: req.body.email,
         resultJson: JSON.stringify(req.body.result)
     }).then(() => logger.info("Survey saved in db!"))
         .catch((err) => handle_error(err, next));

@@ -7,13 +7,18 @@ import axios from 'axios';
 
 StylesManager.applyTheme("defaultV2");
 
+const server_url = "http://localhost:8080"
+// const server_url = ""
+
+
 function onComplete(survey) {
-  const email = localStorage.getItem("email");
-  axios.post("http://localhost:8080/survey", { email: email, result: survey.data });
+  const email = survey.data["e-mail"];
+  axios.post(`${server_url}/survey`, { result: survey.data });
+  //send email confirmation
 }
 
 export function SurveyPage() {
-  const [serverUrl, setServerUrl] = useState("http://localhost:8080");
+  const [serverUrl, setServerUrl] = useState(server_url);
   const [surveyJson, setSurveyJson] = useState();
 
   useEffect(() => {
@@ -33,6 +38,7 @@ export function SurveyPage() {
     e.returnValue = ''
   }
 
+  //TODO: better loading screen!
   if (!surveyJson) return <div>Loading...</div>;
 
   const model = new Model(surveyJson);
