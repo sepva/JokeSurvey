@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start_server": "node index.js",
+    "mail": "node send_mail.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -16,6 +17,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "form-data": "^4.0.2",
+    "mailgun": "^0.5.0",
+    "mailgun.js": "^11.1.0",
     "mongoose": "^8.10.0",
     "winston": "^3.17.0"
   }

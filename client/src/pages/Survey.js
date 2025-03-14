@@ -10,16 +10,21 @@ StylesManager.applyTheme("defaultV2");
 const server_url = "http://localhost:8080"
 // const server_url = ""
 
-
-function onComplete(survey) {
-  const email = survey.data["e-mail"];
-  axios.post(`${server_url}/survey`, { result: survey.data });
-  //send email confirmation
+function alertUser(e) {
+  e.preventDefault()
+  e.returnValue = ''
 }
 
 export function SurveyPage() {
   const [serverUrl, setServerUrl] = useState(server_url);
   const [surveyJson, setSurveyJson] = useState();
+  let finished = false;
+
+  function onComplete(survey) {
+    finished = true;
+    window.removeEventListener('beforeunload', alertUser)
+    axios.post(`${server_url}/survey`, { result: survey.data });
+  }
 
   useEffect(() => {
     axios.get(`${serverUrl}/survey`).then((response) => {
@@ -33,12 +38,7 @@ export function SurveyPage() {
       window.removeEventListener('beforeunload', alertUser)
     }
   }, [])
-  const alertUser = e => {
-    e.preventDefault()
-    e.returnValue = ''
-  }
 
-  //TODO: better loading screen!
   if (!surveyJson) return <div>Loading...</div>;
 
   const model = new Model(surveyJson);
@@ -50,6 +50,7 @@ export function SurveyPage() {
         onComplete={onComplete}
       />
       <Prompt
+        when={!finished}
         message={() => 'Are you sure you want to leave this beautiful survey? Your progress could be lost...'}
       />
     </div>

@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path'
 import { SurveyModel, SurveyResultModel } from './model/survey.js';
+import { sendEmail } from './send_mail.js';
 import { createLogger, transports } from "winston"
 const port = process.env.PORT || "8080"
 
@@ -53,8 +54,13 @@ app.get('/survey', (req, res, next) => {
 
 //post results of survey
 app.post('/survey', (req, res, next) => {
+    const result = req.body.result
+
     SurveyResultModel.create({
-        resultJson: JSON.stringify(req.body.result)
+        resultJson: JSON.stringify(result)
     }).then(() => logger.info("Survey saved in db!"))
         .catch((err) => handle_error(err, next));
+
+    sendEmail(result['e-mail']).then(msg => logger.info(msg))
+        .catch(err => console.log(err))
 })
