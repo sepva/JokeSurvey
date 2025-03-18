@@ -7,12 +7,11 @@ const API_KEY = process.env.MAIL;
 const DOMAIN = 'jokesurvey.me';
 
 export const sendEmail = async (email) => {
-    console.log(`Seppe Vanswegenoven <${email}>`)
     const formData = new FormData();
-    formData.append('from', 'Mailgun Sandbox <postmaster@jokesurvey.me>');
+    formData.append('from', '<JokeTailor survey> <postmaster@jokesurvey.me>');
     formData.append('to', `Seppe Vanswegenoven <${email}>`);
-    formData.append('subject', 'Hello Seppe Vanswegenoven');
-    formData.append('text', 'Congratulations Seppe Vanswegenoven, you just sent an email with Mailgun! You are truly awesome!');
+    formData.append('subject', 'Thank you!');
+    formData.append('text', 'Thank you for completing my survey! You will be notified when the second part of the survey is ready!');
 
     try {
         const response = await axios.post(

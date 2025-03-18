@@ -20,6 +20,10 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(import.meta.dirname, 'build')));
 
+app.get('/jokesurvey', function (req, res) {
+    res.sendFile(path.resolve(import.meta.dirname, './build/index.html'));
+});
+
 //check if server is running
 app.listen(port, () => {
     logger.info("Server started and listening")
