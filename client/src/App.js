@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 import "./App.css";
 import { HomePage } from "./pages/Home";
 import { SurveyPage } from "./pages/Survey";
+import { SecondSurveyPage } from "./pages/SecondSurveyPage";
 
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -26,6 +27,9 @@ export default function SurveyJSReactApplication() {
             </Route>
             <Route path="/jokesurvey">
               <SurveyPage />
+            </Route>
+            <Route path="/second_survey/:userId">
+              <SecondSurveyPage />
             </Route>
           </Switch>
         </div>

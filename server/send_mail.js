@@ -8,7 +8,7 @@ const DOMAIN = 'jokesurvey.me';
 
 export const sendEmail = async (email) => {
     const formData = new FormData();
-    formData.append('from', '<JokeTailor survey> <postmaster@jokesurvey.me>');
+    formData.append('from', 'JokeTailor survey <postmaster@jokesurvey.me>');
     formData.append('to', `Seppe Vanswegenoven <${email}>`);
     formData.append('subject', 'Thank you!');
     formData.append('text', 'Thank you for completing my survey! You will be notified when the second part of the survey is ready!');

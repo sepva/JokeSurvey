@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path'
-import { SurveyModel, SurveyResultModel } from './model/survey.js';
+import { SurveyModel, SurveyResultModel, SecondSurveyModel, SecondSurveyResultModel } from './model/survey.js';
 import { sendEmail } from './send_mail.js';
 import { createLogger, transports } from "winston"
 const port = process.env.PORT || "8080"
@@ -23,6 +23,11 @@ app.use(express.static(path.join(import.meta.dirname, 'build')));
 app.get('/jokesurvey', function (req, res) {
     res.sendFile(path.resolve(import.meta.dirname, './build/index.html'));
 });
+
+app.get('/second_survey/:userId', function (req, res) {
+    res.sendFile(path.resolve(import.meta.dirname, './build/index.html'));
+}
+);
 
 //check if server is running
 app.listen(port, () => {
@@ -47,6 +52,16 @@ async function get_survey() {
     return JSON.parse(survey[0].json)
 }
 
+async function get_second_survey(userId) {
+    const second_survey = await SecondSurveyModel.findOne({ userId: userId })
+    return JSON.parse(second_survey.survey)
+}
+
+async function get_email_from_userId(userId) {
+    const second_survey = await SecondSurveyModel.findOne({ userId: userId })
+    return second_survey["e-mail"]
+}
+
 //get survey
 app.get('/survey', (req, res, next) => {
     get_survey().then(json => {
@@ -67,4 +82,29 @@ app.post('/survey', (req, res, next) => {
 
     sendEmail(result['e-mail']).then(msg => logger.info(msg))
         .catch(err => console.log(err))
+})
+
+//get second survey
+app.get('/second_survey', (req, res, next) => {
+    const userId = req.query.userId
+    get_second_survey(userId).then(json => {
+        res.json(json)
+        logger.info("Send survey!")
+    })
+        .catch((err) => handle_error(err, next))
+})
+
+//post results of second survey
+app.post('/second_survey', (req, res, next) => {
+    const result = req.body.result
+    const userId = req.body.userId
+
+    SecondSurveyResultModel.create({
+        userId: userId,
+        resultJson: JSON.stringify(result)
+    }).then(() => logger.info("Second survey saved in db!"))
+        .catch((err) => handle_error(err, next));
+
+    get_email_from_userId(userId).then((email) => sendEmail(email).then(msg => logger.info(msg)))
+        .catch(err => handle_error(err, next))
 })

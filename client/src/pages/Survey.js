@@ -7,8 +7,8 @@ import axios from 'axios';
 
 StylesManager.applyTheme("defaultV2");
 
-// const server_url = "http://localhost:8080"
-const server_url = ""
+const server_url = "http://localhost:8080"
+// const server_url = ""
 
 function alertUser(e) {
   e.preventDefault()
