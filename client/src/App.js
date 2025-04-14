@@ -28,7 +28,7 @@ export default function SurveyJSReactApplication() {
             <Route path="/jokesurvey">
               <SurveyPage />
             </Route>
-            <Route path="/second_survey/:userId">
+            <Route path="/second_survey/:userId/:password">
               <SecondSurveyPage />
             </Route>
           </Switch>

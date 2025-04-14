@@ -7,8 +7,8 @@ import axios from 'axios';
 
 StylesManager.applyTheme("defaultV2");
 
-const server_url = "http://localhost:8080"
-// const server_url = ""
+// const server_url = "http://localhost:8080"
+const server_url = ""
 
 function alertUser(e) {
     e.preventDefault()
@@ -18,7 +18,7 @@ function alertUser(e) {
 export function SecondSurveyPage() {
     const [serverUrl, setServerUrl] = useState(server_url);
     const [surveyJson, setSurveyJson] = useState();
-    let { userId } = useParams();
+    let { password, userId } = useParams();
     let finished = false;
 
     function onComplete(survey) {
@@ -28,7 +28,7 @@ export function SecondSurveyPage() {
     }
 
     useEffect(() => {
-        axios.get(`${serverUrl}/second_survey`, { params: { userId: userId } }).then((response) => {
+        axios.get(`${serverUrl}/second_survey`, { params: { userId: userId, password: password } }).then((response) => {
             setSurveyJson(response.data);
         });
     }, [serverUrl]);

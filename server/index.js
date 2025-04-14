@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path'
 import { SurveyModel, SurveyResultModel, SecondSurveyModel, SecondSurveyResultModel } from './model/survey.js';
-import { sendEmail } from './send_mail.js';
+import { sendEmail, sendSecondEmail } from './send_mail.js';
 import { createLogger, transports } from "winston"
 const port = process.env.PORT || "8080"
 
@@ -24,7 +24,7 @@ app.get('/jokesurvey', function (req, res) {
     res.sendFile(path.resolve(import.meta.dirname, './build/index.html'));
 });
 
-app.get('/second_survey/:userId', function (req, res) {
+app.get('/second_survey/:userId/:password', function (req, res) {
     res.sendFile(path.resolve(import.meta.dirname, './build/index.html'));
 }
 );
@@ -52,8 +52,8 @@ async function get_survey() {
     return JSON.parse(survey[0].json)
 }
 
-async function get_second_survey(userId) {
-    const second_survey = await SecondSurveyModel.findOne({ userId: userId })
+async function get_second_survey(userId, password) {
+    const second_survey = await SecondSurveyModel.findOne({ userId: userId, passcode: password })
     return JSON.parse(second_survey.survey)
 }
 
@@ -87,7 +87,8 @@ app.post('/survey', (req, res, next) => {
 //get second survey
 app.get('/second_survey', (req, res, next) => {
     const userId = req.query.userId
-    get_second_survey(userId).then(json => {
+    const password = req.query.password
+    get_second_survey(userId, password).then(json => {
         res.json(json)
         logger.info("Send survey!")
     })
@@ -105,6 +106,6 @@ app.post('/second_survey', (req, res, next) => {
     }).then(() => logger.info("Second survey saved in db!"))
         .catch((err) => handle_error(err, next));
 
-    get_email_from_userId(userId).then((email) => sendEmail(email).then(msg => logger.info(msg)))
+    get_email_from_userId(userId).then((email) => sendSecondEmail(email).then(msg => logger.info(msg)))
         .catch(err => handle_error(err, next))
 })
